@@ -23,8 +23,10 @@ random.seed(6137)
 
 # let's start off with some research!
 # we can queue as much as we want.
+
 gc.queue_research(bc.UnitType.Knight)
 gc.queue_research(bc.UnitType.Rocket)
+#gc.queue_research(bc.UnitType.Ranger)
 gc.queue_research(bc.UnitType.Worker)
 
 
@@ -53,6 +55,10 @@ while True:
                     gc.produce_robot(unit.id, bc.UnitType.Knight)
                     print('produced a knight!')
                     continue
+                if gc.can_produce_robot(unit.id, bc.UnitType.Healer):
+                    gc.produce_robot(unit.id, bc.UnitType.Healer)
+                    print('produced a knight!')
+                    continue
                 #elif x > 3 and gc.can_produce_robot(unit.id, bc.UnitType.Ranger):
                 #    gc.produce_robot(unit.id, bc.UnitType.Ranger)
                 #    print('produced a ranger!')
@@ -64,7 +70,7 @@ while True:
             # first, let's look for nearby blueprints to work on
             location = unit.location
             if location.is_on_map():
-                nearby = gc.sense_nearby_units(location.map_location(), 4)
+                nearby = gc.sense_nearby_units(location.map_location(), 1000)
                 #m = MapLocation
                 for other in nearby:
                     if unit.unit_type == bc.UnitType.Worker and gc.can_build(unit.id, other.id):
