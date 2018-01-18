@@ -5,6 +5,7 @@ import traceback
 import time
 from random import randint
 import os
+from gaussian_blur import GaussianBlur
 print(os.getcwd())
 
 print("pystarting")
@@ -31,6 +32,8 @@ gc.queue_research(bc.UnitType.Worker)
 
 
 my_team = gc.team()
+gb = GaussianBlur(gc)
+gb.get_gauss()
 
 while True:
     # We only support Python 3, which means brackets around print()
@@ -55,9 +58,9 @@ while True:
                     gc.produce_robot(unit.id, bc.UnitType.Knight)
                     print('produced a knight!')
                     continue
-                if gc.can_produce_robot(unit.id, bc.UnitType.Healer):
-                    gc.produce_robot(unit.id, bc.UnitType.Healer)
-                    print('produced a knight!')
+                if gc.can_produce_robot(unit.id, bc.UnitType.Mage):
+                    gc.produce_robot(unit.id, bc.UnitType.Mage)
+                    print('produced a mage!')
                     continue
                 #elif x > 3 and gc.can_produce_robot(unit.id, bc.UnitType.Ranger):
                 #    gc.produce_robot(unit.id, bc.UnitType.Ranger)
@@ -67,6 +70,10 @@ while True:
                 for x in directions:
                     if gc.can_harvest(unit.id, x):
                         gc.harvest(unit.id, x)
+                        continue
+                    if gc.round() < 10 and gc.can_replicate(unit.id, x):
+                        gc.replicate(unit.id, x)
+                        continue
             # first, let's look for nearby blueprints to work on
             location = unit.location
             if location.is_on_map():
@@ -77,16 +84,16 @@ while True:
                         gc.build(unit.id, other.id)
                         print('built a factory!')
                         # move onto the next unit
-                        continue
+
                     if other.team != my_team and unit.unit_type == bc.UnitType.Knight and gc.is_attack_ready(unit.id):
                         if gc.can_attack(unit.id, other.id):
                             print('attacked a thing!')
                             gc.attack(unit.id, other.id)
-                            continue
+
                         #elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, .direction_to(other.location.map_location())):
                         #    print('moving unit')
                         #    gc.move_robot(unit.id. d)
-                        #    gc.move_robot(unit.id, gc.direction_to(other.locationmap_location()))
+                        #    gc.move_robot(unit.id, gc.direction_to(other.location.map_location()))
 
 
             #print(str(gc.karbonite))
@@ -97,6 +104,9 @@ while True:
             # or, try to build a factory:
             if gc.karbonite() > bc.UnitType.Factory.blueprint_cost() and gc.can_blueprint(unit.id, bc.UnitType.Factory, d):
                 gc.blueprint(unit.id, bc.UnitType.Factory, d)
+            #elif gc.round() > 200 and gc.karbonite() > bc.UnitType.Rocket.blueprint_cost() and gc.can_blueprint(unit.id, bc.UnitType.Rocket, d):
+            #    gc.blueprint(unit.id, bc.UnitType.Rocket, d)
+
             # and if that fails, try to move
             elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, d):
                 gc.move_robot(unit.id, d)
