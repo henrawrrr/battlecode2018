@@ -43,7 +43,7 @@ while True:
     try:
         # walk through our units:
         for unit in gc.my_units():
-
+            move = 0;
             # first, factory logic
             if unit.unit_type == bc.UnitType.Factory:
                 garrison = unit.structure_garrison()
@@ -82,6 +82,7 @@ while True:
                 for other in nearby:
                     if unit.unit_type == bc.UnitType.Worker and gc.can_build(unit.id, other.id):
                         gc.build(unit.id, other.id)
+                        move = 1;
                         print('built a factory!')
                         # move onto the next unit
 
@@ -108,7 +109,7 @@ while True:
             #    gc.blueprint(unit.id, bc.UnitType.Rocket, d)
 
             # and if that fails, try to move
-            elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, d):
+            elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, d) and move == 0:
                 gc.move_robot(unit.id, d)
 
     except Exception as e:
