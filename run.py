@@ -6,6 +6,7 @@ import time
 from random import randint
 import os
 from gaussian_blur import GaussianBlur
+from mage import Mage
 print(os.getcwd())
 
 print("pystarting")
@@ -74,6 +75,15 @@ while True:
                     if gc.round() < 10 and gc.can_replicate(unit.id, x):
                         gc.replicate(unit.id, x)
                         continue
+            if unit.unit_type == bc.UnitType.Mage:
+                for x in directions: #random movement for now
+                    if gc.is_move_ready(unit.id) and gc.can_move(unit.id, x) and move == 0:
+                        gc.move_robot(unit.id, x)
+                m = Mage(gc, unit)
+                if unit.location.is_in_garrison() == False:
+                    m.target()
+
+
             # first, let's look for nearby blueprints to work on
             location = unit.location
             if location.is_on_map():
