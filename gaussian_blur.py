@@ -21,7 +21,7 @@ class GaussianBlur:
         for x in range(0,self.map.height):
             for y in range(0,self.map.width):
                 b = self.gc.starting_map(bc.Planet(0))
-                grid[x][y] = b.initial_karbonite_at(bc.MapLocation(bc.Planet(0),x,y))
+                grid[x][y] = b.initial_karbonite_at(bc.MapLocation(bc.Planet(0),y,x))
         gauss = [[0 for x in range(self.map.width)] for y in range(self.map.height)]
 
         for r in range(1,len(grid)-1):

@@ -3,9 +3,11 @@ import random
 import sys
 import traceback
 import time
+import random
 from random import randint
 import os
 from gaussian_blur import GaussianBlur
+from worker_harvest import HarvestStrategy
 from mage import Mage
 print(os.getcwd())
 
@@ -34,7 +36,7 @@ gc.queue_research(bc.UnitType.Worker)
 
 my_team = gc.team()
 gb = GaussianBlur(gc)
-gb.get_gauss()
+gd = gb.get_gauss()
 
 while True:
     # We only support Python 3, which means brackets around print()
@@ -75,6 +77,10 @@ while True:
                     if gc.round() < 10 and gc.can_replicate(unit.id, x):
                         gc.replicate(unit.id, x)
                         continue
+                if(random.random() < 0.5):
+                    hs = HarvestStrategy(bc,gc,gd,unit)
+                    hs.move()
+
             if unit.unit_type == bc.UnitType.Mage:
                 for x in directions: #random movement for now
                     if gc.is_move_ready(unit.id) and gc.can_move(unit.id, x) and move == 0:
