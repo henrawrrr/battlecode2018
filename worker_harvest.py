@@ -49,5 +49,6 @@ class HarvestStrategy:
                 if(tst > maxx):
                     maxx = tst
                     maxx_dir = d
-        if(gc.is_move_ready(self.unit.id)):
+                    print(tst)
+        if(gc.is_move_ready(self.unit.id) and gc.can_move(self.unit.id,maxx_dir)):
             gc.move_robot(self.unit.id,maxx_dir)
