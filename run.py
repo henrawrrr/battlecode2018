@@ -37,10 +37,11 @@ gc.queue_research(bc.UnitType.Worker)
 my_team = gc.team()
 gb = GaussianBlur(gc)
 gd = gb.get_gauss()
-
+rocket_id = -1
+unit_rocket = 0
 while True:
     # We only support Python 3, which means brackets around print()
-    print('pyround:', gc.round(), 'time left:', gc.get_time_left_ms(), 'ms')
+    print('pyround:', gc.round(), 'time left:', gc.get_time_left_ms(), 'karbonite:', gc.karbonite(), 'ms')
 
     # frequent try/catches are a good idea
     try:
@@ -82,9 +83,9 @@ while True:
                     hs.move()
 
             if unit.unit_type == bc.UnitType.Mage:
-                for x in directions: #random movement for now
-                    if gc.is_move_ready(unit.id) and gc.can_move(unit.id, x) and move == 0:
-                        gc.move_robot(unit.id, x)
+                # for x in directions: #random movement for now
+                #     if gc.is_move_ready(unit.id) and gc.can_move(unit.id, x) and move == 0:
+                #         gc.move_robot(unit.id, x)
                 m = Mage(gc, unit)
                 if unit.location.is_in_garrison() == False:
                     m.target()
@@ -99,13 +100,31 @@ while True:
                     if unit.unit_type == bc.UnitType.Worker and gc.can_build(unit.id, other.id):
                         gc.build(unit.id, other.id)
                         move = 1;
-                        print('built a factory!')
+                        # print('built a factory!')
+                        print(other.unit_type)
+                        if(other.unit_type == bc.UnitType.Rocket):
+                            rocket_id = other.id
                         # move onto the next unit
 
                     if other.team != my_team and unit.unit_type == bc.UnitType.Knight and gc.is_attack_ready(unit.id):
                         if gc.can_attack(unit.id, other.id):
                             print('attacked a thing!')
                             gc.attack(unit.id, other.id)
+                    if(rocket_id != -1):
+                        if(other.unit_type == bc.UnitType.Worker and gc.can_load(rocket_id,other.id)):
+                            unit_rocket+=1
+                            gc.load(rocket_id,other.id)
+
+            if((gc.round() > 700 or unit_rocket > 3) and unit.unit_type == bc.UnitType.Rocket):
+                mapp = gc.starting_map(bc.Planet(1))
+                for x in range(0,self.mapp.height):
+                    for y in range(0,self.map.width):
+                        if(gc.can_launch_rocket(unit.id,bc.MapLocation(bc.Planet(1),y,x))):
+                            gc.launch_rocket(unit.id,bc.MapLocation(bc.Planet(1),y,x))
+
+
+
+
 
                         #elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, .direction_to(other.location.map_location())):
                         #    print('moving unit')
@@ -121,12 +140,15 @@ while True:
             # or, try to build a factory:
             if gc.karbonite() > bc.UnitType.Factory.blueprint_cost() and gc.can_blueprint(unit.id, bc.UnitType.Factory, d):
                 gc.blueprint(unit.id, bc.UnitType.Factory, d)
-            #elif gc.round() > 200 and gc.karbonite() > bc.UnitType.Rocket.blueprint_cost() and gc.can_blueprint(unit.id, bc.UnitType.Rocket, d):
-            #    gc.blueprint(unit.id, bc.UnitType.Rocket, d)
+            elif gc.round() > 200 and gc.karbonite() > bc.UnitType.Rocket.blueprint_cost() and gc.can_blueprint(unit.id, bc.UnitType.Rocket, d):
+               gc.blueprint(unit.id, bc.UnitType.Rocket, d)
 
             # and if that fails, try to move
             elif gc.is_move_ready(unit.id) and gc.can_move(unit.id, d) and move == 0:
                 gc.move_robot(unit.id, d)
+
+            # if(gc.round() > 200):
+            #     if(gc.can_launch)
 
     except Exception as e:
         print('Error:', e)
